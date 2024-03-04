@@ -147,3 +147,47 @@ ggplot(endgame_sentiment,
        # Title that gives page name and mean sentiment score, to three significant figures
        x = "Sentiment Score", 
        y = "Number of tweets") 
+
+
+## Wordcloud example for each lexicon
+
+example_text<-read.delim("./Lecture Slides/Example text.txt", header = FALSE)
+
+
+example_text <- example_text %>%
+  select(V1) %>% 
+  unnest_tokens(word, V1)
+
+
+example_text %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red"),
+                   max.words = 100)
+
+
+example_text %>%
+  inner_join(get_sentiments("afinn")) %>%
+  count(word, value, sort = TRUE) %>%
+  reshape2::acast(word ~ value, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen"),
+                   max.words = 100)
+
+
+example_text %>%
+  inner_join(get_sentiments("nrc")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen",
+                              "darkblue","darkmagenta"),
+                   max.words = 100)
+
+
+example_text %>%
+  inner_join(get_sentiments("loughran")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen",
+                              "darkblue","darkmagenta"),
+                   max.words = 100)
