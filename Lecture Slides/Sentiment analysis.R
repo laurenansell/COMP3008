@@ -2,6 +2,7 @@
 library(tidyverse)
 library(ggthemes)
 library(tidytext)
+library(textdata)
 library(wordcloud)
 library(wordcloud2)
 
@@ -68,7 +69,7 @@ sentiment_means <- endgame_sentiment %>%
 sentiment_means
 
 
-# Barplot
+## Barplot
 
 ggplot(endgame_sentiment, 
        aes(x = score)) + # Sentiment score on x-axis
@@ -78,7 +79,7 @@ ggplot(endgame_sentiment,
   geom_text(aes(x = mean_score, 
                 y = Inf, 
                 label = signif(mean_score, 3)), # Show to three significant figures
-            vjust = 2, 
+            vjust = 1.3, 
             data = sentiment_means) + 
   # Add the mean as a number; vjust moves it down from the top of the plot
   scale_x_continuous(breaks = -10:10,  # Specify a suitable integer range for the x-axis
@@ -86,15 +87,27 @@ ggplot(endgame_sentiment,
   labs(title = paste("Sentiments of tweets containing #endgame give a mean of", signif(sentiment_means$mean_score, 3)),
        # Title that gives page name and mean sentiment score, to three significant figures
        x = "Sentiment Score (Bing)", 
-       y = "Number of tweets") 
+       y = "Number of tweets")+
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size=16),
+        axis.text = element_text(size=14))
 
 
-cleaned_tweet_words %>%
-  inner_join(get_sentiments("bing")) %>%
-  count(word, sentiment, sort = TRUE) %>%
-  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
-  comparison.cloud(colors = c("blue", "red"),
-                   max.words = 100)
+
+## Time series
+
+endgame_sentiment<-left_join(endgame_sentiment,twitter_data,by=c("tweetnumber"="X"))
+
+## Convert the time stamp from a character string
+endgame_sentiment$created<-as.POSIXct(endgame_sentiment$created)
+
+endgame_sentiment %>% group_by(created) %>% summarise(total=sum(score)) %>% 
+  ggplot(aes(x=created,y=total))+geom_line(linetype=2)+  
+  labs(title = paste("Timeseries of sentiments of tweets containing #endgame"),
+       x = "Time", y = "Total Sentiment (Bing)")+
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size=16),
+        axis.text = element_text(size=14))
 
 ################ Afinn
 
@@ -106,6 +119,42 @@ afinn_word_counts <- cleaned_tweet_words %>%
 
 
 ## Calculate sentiment scores for each tweet
+
+endgame_sentiment_afinn <- cleaned_tweet_words %>%
+  inner_join(get_sentiments("afinn")) %>%
+  count(tweetnumber,value) 
+
+
+endgame_sentiment_afinn<-endgame_sentiment_afinn%>%group_by(tweetnumber)%>%
+  mutate(total=sum(value*n))
+
+## Remove duplicate values
+
+endgame_sentiment_afinn<-endgame_sentiment_afinn[!duplicated(endgame_sentiment_afinn$tweetnumber),]
+
+
+sentiment_means_afinn <- as.data.frame(mean(endgame_sentiment_afinn$total))   
+sentiment_means_afinn
+names(sentiment_means_afinn)[1]<-"mean_score"
+
+
+# Distribution of the sentiments  
+ggplot(endgame_sentiment_afinn, 
+       aes(x = total)) + 
+  geom_bar(fill = "lightgreen", colour = "darkgreen") +
+  geom_vline(aes(xintercept = mean_score), data = sentiment_means_afinn) +
+  geom_text(aes(x = mean_score, 
+                y = Inf, 
+                label = signif(mean_score, 3)), 
+            vjust =1.3, 
+            data = sentiment_means_afinn) + 
+  scale_x_continuous(breaks = c(-15,-10,5,0,5,10,15)) + 
+  labs(title = paste("Sentiments of tweets containing #endgame give a mean of", signif(sentiment_means_afinn$mean_score, 3)),
+       x = "Sentiment Score (Afinn)", 
+       y = "Number of tweets") +
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size=16),
+        axis.text = element_text(size=14))
 
 ## We count up how many positive and negative words there are in each tweet
 
