@@ -198,6 +198,21 @@ ggplot(endgame_sentiment,
        y = "Number of tweets") 
 
 
+## Time series
+
+endgame_sentiment_afinn<-left_join(endgame_sentiment_afinn,twitter_data,by=c("tweetnumber"="X"))
+
+## Convert the time stamp from a character string
+endgame_sentiment_afinn$created<-as.POSIXct(endgame_sentiment_afinn$created)
+
+endgame_sentiment_afinn %>% group_by(created) %>% summarise(total_score=sum(total)) %>% 
+  ggplot(aes(x=created,y=total_score))+geom_line(linetype=2)+  
+  labs(title = paste("Timeseries of sentiments of tweets containing #endgame"),
+       x = "Time", y = "Total Sentiment (Afinn)")+
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size=16),
+        axis.text = element_text(size=14))
+
 ## Wordcloud example for each lexicon
 
 example_text<-read.delim("./Lecture Slides/Example text.txt", header = FALSE)
