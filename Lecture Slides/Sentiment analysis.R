@@ -5,6 +5,7 @@ library(tidytext)
 library(textdata)
 library(wordcloud)
 library(wordcloud2)
+library(tidyEmoji)
 
 ## Read in the data
 twitter_data<-read.csv("../endgame_tweets.csv", encoding = "UTF-8")
@@ -255,3 +256,59 @@ example_text %>%
   comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen",
                               "darkblue","darkmagenta"),
                    max.words = 100)
+
+
+###### Emoji data
+
+ata_tweets <- readr::read_csv("./Lecture Slides/ata_tweets.rda")
+
+## See how many tweets contain emojis
+ata_tweets %>% emoji_summary(full_text)
+
+## See how many emojis are contained in each tweet
+ata_tweets %>%
+  emoji_extract_nest(full_text) %>%
+  select(.emoji_unicode) 
+
+
+## See which emojis have been used
+
+emoji_count_per_tweet <- ata_tweets %>%
+  emoji_extract_unnest(full_text) 
+
+emoji_count_per_tweet
+
+## Count the number of emojis
+emoji_count_per_tweet %>%
+  group_by(.emoji_count) %>%
+  summarize(n = n()) %>%
+  ggplot(aes(.emoji_count, n)) +
+  geom_col() +
+  scale_x_continuous(breaks = seq(1,15)) +
+  ggtitle("How many Emoji does each Emoji Tweet have?")
+
+
+## Top 20 emojis
+
+top_20_emojis <- ata_tweets %>%
+  top_n_emojis(full_text)
+
+top_20_emojis
+
+## Plot these
+
+top_20_emojis %>%
+  ggplot(aes(n, emoji_name, fill = emoji_category)) +
+  geom_col()
+
+## we can add the emojis to the plot
+top_20_emojis %>%
+  mutate(emoji_name = stringr::str_replace_all(emoji_name, "_", " "),
+         emoji_name = forcats::fct_reorder(emoji_name, n)) %>%
+  ggplot(aes(n, emoji_name, fill = emoji_category)) +
+  geom_col() +
+  geom_text(aes(label = unicode), hjust = 0.1) +
+  labs(x = "# of Emoji",
+       y = "Emoji name",
+       fill = "Emoji category",
+       title = "The 20 most popular Emojis")
