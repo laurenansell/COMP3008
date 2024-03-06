@@ -157,47 +157,6 @@ ggplot(endgame_sentiment_afinn,
         axis.title = element_text(size=16),
         axis.text = element_text(size=14))
 
-## We count up how many positive and negative words there are in each tweet
-
-## Associate sentiment scores to each tweet
-
-endgame_sentiment_afinn <- cleaned_tweet_words %>%
-  inner_join(get_sentiments("afinn")) %>%
-  count(tweetnumber, value) %>%
-  spread(value, n, fill = 0) %>% # negative and positive sentiment in separate columns
-  mutate(score = positive - negative) # score = net sentiment (positive - negative)
-head(endgame_sentiment)
-
-
-## Tabulate the scores
-
-endgame_sentiment %>% count(score)
-
-sentiment_means <- endgame_sentiment %>% 
-  summarize(mean_score = mean(score)) 
-sentiment_means
-
-
-# Barplot
-
-ggplot(endgame_sentiment, 
-       aes(x = score)) + # Sentiment score on x-axis
-  geom_bar(fill = "lightgreen", colour = "darkgreen") + # geom_bar will do the tabulation for you :-)
-  geom_vline(aes(xintercept = mean_score), data = sentiment_means) +
-  # Add a vertical line at the mean score, calculated and stored in sentiment_means_nba above
-  geom_text(aes(x = mean_score, 
-                y = Inf, 
-                label = signif(mean_score, 3)), # Show to three significant figures
-            vjust = 2, 
-            data = sentiment_means) + 
-  # Add the mean as a number; vjust moves it down from the top of the plot
-  scale_x_continuous(breaks = -10:10,  # Specify a suitable integer range for the x-axis
-                     minor_breaks = NULL) + # Show integers; set this to a suitably large range
-  labs(title = paste("Sentiments of tweets containing #endgame give a mean of", signif(sentiment_means$mean_score, 3)),
-       # Title that gives page name and mean sentiment score, to three significant figures
-       x = "Sentiment Score", 
-       y = "Number of tweets") 
-
 
 ## Time series
 
