@@ -1,0 +1,184 @@
+---
+title: "COMP3008 - Big Data Analytics"
+author: "Workshop 7 - Introduction to R"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This worksheet is designed to give you an introduction to coding in R. R is a programming language for statistical computing and data visualization. It has been adopted in the fields of data mining, bioinformatics, and data analysis.
+
+Like Python, R uses libraries of functions to carry out tasks which can be imported as follows:
+
+```{r}
+library(readr) # Loads in the library readr
+```
+
+Below are some simple exercises designed to get you more familiar with the way R works. 
+
+## Exercise 1 - Creating data objects in R
+
+Consider the following data:
+
+\begin{equation*}
+x=\begin{pmatrix}26\\
+36\\
+59\\
+24\\
+21\\
+47\\
+65\\
+16\\
+56\\
+33\\
+\end{pmatrix}
+\end{equation*}
+
+\begin{equation*}
+y=\begin{pmatrix}55\\
+49\\
+33\\
+44\\
+39\\
+59\\
+47\\
+62\\
+56\\
+54\\
+\end{pmatrix}
+\end{equation*}
+
+Create two R objects for these data vectors, naming them x\_vector and y\_vector.
+
+\textbf{Solution}
+
+```{r}
+x_vector<-c(26,36,59,24,21,47,65,16,56,33)
+
+y_vector<-c(55,49,33,44,39,59,47,62,56,54)
+
+```
+
+## Exercise 2 - Numerical summaries and data manipulation in R
+
+Find the mean and standard deviation of x\_vector and y\_vector.
+
+Remove both the second, fifth and sixth element from both vectors and give these objects a new name. Now find the mean and standard deviation of these new vectors.
+
+Create a data frame from the new vectors you created.
+
+\textbf{Solution:}
+
+```{r}
+mean(x_vector) ## mean of x_vector
+sd(x_vector)  ## standard deviation of x_vector
+mean(y_vector)  ## mean of y_vector
+sd(y_vector)  ## standard deviation of y_vector
+
+## Remove the second, fifth and sixth elements
+x_vector_removed<-x_vector[-c(2,5,6)]
+y_vector_removed<-y_vector[-c(2,5,6)]
+
+x_vector_removed
+y_vector_removed
+
+## Alternatively
+x_vector_removed<-x_vector[c(1,3,4,7,8,9,10)]
+y_vector_removed<-y_vector[c(1,3,4,7,8,9,10)]
+
+x_vector_removed
+y_vector_removed
+
+mean(x_vector_removed)
+sd(x_vector_removed)
+mean(y_vector_removed)
+sd(y_vector_removed)
+
+xy_dataframe<-as.data.frame(cbind(x_vector_removed,y_vector_removed))
+
+xy_dataframe
+
+```
+
+
+
+## Exercise 3 - Reading data into R
+
+On the DLE is a file named \texttt{imbd\_top\_1000\_movies.csv}, use the function \texttt{read\_csv} to load the file into R. 
+
+Once the data is loaded in, you can use the functions \texttt{head} and \texttt{tail} to view the first and last 6 rows of data.
+
+\textbf{Solution}
+
+```{r}
+imdb_data<-read.csv("imdb_top_1000_movies.csv")
+
+head(imdb_data)
+
+tail(imdb_data)
+
+```
+
+## Exercise 4 - Plotting data using ggplot2
+
+A small company has recorded the following data on volume and costs of production for the last ten months:
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|l|llllllllll|}
+\hline
+Production (1,000 units)& 2& 4 &6 &6 &10& 8& 5& 7& 11& 12\\
+\hline
+Costs (£1,000s) &7 &11& 12& 19& 22& 20& 16& 13& 24& 20\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Create a data frame containing variables production and costs, then plot these data. You will need to load in the library \texttt{ggplot2}.
+
+You should end up with the following:
+
+\textbf{Solution}
+
+```{r,warning=FALSE}
+production<-c(2, 4,6,6,10, 8, 5, 7, 11, 12)
+costs<-c(7,11, 12, 19, 22, 20, 16, 13, 24, 20)
+
+df<-as.data.frame(cbind(production,costs))
+
+library(ggplot2)
+
+ggplot(df,aes(x=production,y=costs))+geom_point()
+```
+
+Now plot production against time.To do this you will need to produce a sequence of numbers. Create a sequence from 1 to 10 and call it month. Then include month in your data frame so that it now contains production, costs and the newly created month.
+
+\textbf{Solution}
+
+```{r}
+month<-c(1:10)
+df<-cbind(df,month)
+
+ggplot(df,aes(x=month,y=production))+geom_point()
+```
+
+The package \texttt{ggplot2} offers large flexibility of plotting options and control over the plot. Each function has a help page available which can be accessed like so:
+
+```{r,eval=FALSE}
+?mean()
+```
+
+Have look at the help file for \texttt{ggplot2} and customise your plot. On my plot below I have added a linear model and specified the colour of the line, made the points bigger and changed the colour, increased the size and changed the colour of the axis labels.
+
+\textbf{Solution}
+
+```{r,message=FALSE}
+
+ggplot(df,aes(x=month,y=production))+geom_point(size=5,col="hotpink")+
+  geom_smooth(method="lm",col="red")+
+  theme(axis.title.x = element_text(size=16, colour = "blue"),                            
+        axis.title.y = element_text(size=20, colour = "darkgreen"))
+```
