@@ -16,12 +16,12 @@ library(ggpubr)
 
 ## Data
 
-text_1<-read.delim("book_1.txt",header = FALSE)
-text_2<-read.delim("book_2.txt",header = FALSE)
-text_3<-read.delim("book_3.txt",header = FALSE)
-text_4<-read.delim("book_4.txt",header = FALSE)
-text_5<-read.delim("book_5.txt",header = FALSE)
-text_6<-read.delim("book_6.txt",header = FALSE)
+text_1<-read.delim("./Lecture Slides/book_1.txt",header = FALSE)
+text_2<-read.delim("./Lecture Slides/book_2.txt",header = FALSE)
+text_3<-read.delim("./Lecture Slides/book_3.txt",header = FALSE)
+text_4<-read.delim("./Lecture Slides/book_4.txt",header = FALSE)
+text_5<-read.delim("./Lecture Slides/book_5.txt",header = FALSE)
+text_6<-read.delim("./Lecture Slides/book_6.txt",header = FALSE)
 
 all_texts<-read.csv("./Lecture Slides/zipfs_law_data.csv")
 
