@@ -442,6 +442,8 @@ y = int2bin(rep(c(2,4), times = c(nrow(matrix.text.1), nrow(matrix.text.2))))
 model.rnn = trainr(Y = y, X = X, learningrate = 1, numepochs = 1, hidden_dim = 1)
 
 
+
+
 ## keras and tensorflow (faster than above, need to have tensorflow installed)
 
 max_words <- 10000 
