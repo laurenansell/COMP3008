@@ -33,6 +33,121 @@ Is there a difference in the words contained in each of the lexicons? Is there a
 
 Do you agree with how all the words have been categorised in each lexicon? 
 
+\textbf{Solution}
+
+```{r,warning=FALSE,message=FALSE}
+
+## Load in the required libraries
+library(tidyverse)
+library(tidytext)
+library(textdata)
+library(wordcloud)
+library(wordcloud2)
+
+```
+
+```{r,warning=FALSE}
+
+## Load in the data 
+
+character_a<-read.delim("Character_A.txt", header = FALSE)
+character_b<-read.delim("Character_B.txt", header = FALSE)
+
+## Tokenise the data (put one word into one row)
+
+character_a<- character_a %>% select(V1) %>% ## column that contains the text data
+  unnest_tokens(word, V1)
+
+character_b<- character_b %>% select(V1) %>% ## column that contains the text data
+  unnest_tokens(word, V1)
+
+## Ckeck the data
+
+head(character_a)
+head(character_b)
+
+```
+
+
+```{r,warning=FALSE,message=FALSE}
+
+## Join the tokenised data with the sentiments and produce the word clouds
+
+## First for character a
+
+character_a %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red"),
+                   max.words = 100)
+
+
+character_a %>%
+  inner_join(get_sentiments("afinn")) %>%
+  count(word, value, sort = TRUE) %>%
+  reshape2::acast(word ~ value, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen"),
+                   max.words = 100)
+
+
+character_a %>%
+  inner_join(get_sentiments("nrc")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen",
+                              "darkblue","darkmagenta"),
+                   max.words = 100)
+
+
+character_a %>%
+  inner_join(get_sentiments("loughran")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen",
+                              "darkblue","darkmagenta"),
+                   max.words = 100)
+
+```
+
+```{r,warning=FALSE,message=FALSE}
+
+## Now for character b
+
+character_b %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red"),
+                   max.words = 100)
+
+
+character_b %>%
+  inner_join(get_sentiments("afinn")) %>%
+  count(word, value, sort = TRUE) %>%
+  reshape2::acast(word ~ value, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen"),
+                   max.words = 100)
+
+
+character_b %>%
+  inner_join(get_sentiments("nrc")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen",
+                              "darkblue","darkmagenta"),
+                   max.words = 100)
+
+
+character_b %>%
+  inner_join(get_sentiments("loughran")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  reshape2::acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen",
+                              "darkblue","darkmagenta"),
+                   max.words = 100)
+
+```
 
 ## Exercise 2 - Sentiment Distribution
 
