@@ -1,0 +1,66 @@
+---
+title: "COMP3008 - Big Data Analytics"
+author: "Workshop 8 - Sentiment Analysis"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this worksheet we will be using R to perform sentiment analysis and produce different visualisations of the data. All the data required for this practical is available on the DLE. 
+
+
+## Exercise 1 - Word Clouds
+
+The first task is to create word clouds for the data contained in the two files, \texttt{Character\_A.txt} and \texttt{Character\_B.txt} using the following sentiments 
+
+- Bing
+- Afinn
+- nrc
+- Loughran
+
+The sentiment are available in the \texttt{tidytext} and \texttt{textdata} packages and you can read the data in as follows:
+
+```{r,eval=FALSE}
+character_a<-read.delim("Character_A.txt", header = FALSE)
+
+```
+
+Make sure to include \texttt{header=FALSE} to ensure that none of the text ends up in the column name of the dataframe.
+
+Is there a difference in the words contained in each of the lexicons? Is there a difference in the words each of the character uses?
+
+Do you agree with how all the words have been categorised in each lexicon? 
+
+
+## Exercise 2 - Sentiment Distribution
+
+For this exercise you will need to use the data in the \texttt{Music\_data.csv} file. This file contains the lyrics to each of the songs from an album. Using the Bing and Afinn lexicons calculate the total sentiment for each song and plot the distribution of the sentiment for the album using a histogram.
+
+To create a value from the bing lexicon, you will need the following code:
+
+```{r,eval=FALSE}
+
+toal_sentiment <- cleaned_music_words %>%
+  inner_join(get_sentiments("bing")) %>% ## get the sentiment for the words
+  count(tracknumber, sentiment) %>% ## count the sentiments for each track
+  spread(sentiment, n, fill = 0) %>% ## negative and positive sentiment in separate columns
+  mutate(score = positive - negative) ## score = net sentiment (positive - negative)
+
+```
+
+**Hint**: you will need to create a new column to denote the track number.
+
+\newpage
+
+## Exercise 3 - Sentiment Over Time
+
+For this exercise you will need to use the data in the \texttt{Music\_data.csv} file and the \texttt{worldcup2022\_tweets.csv} file (data source : <https://www.kaggle.com/datasets/konradb/qatar-world-cup-2022-tweets>).
+
+Using these datasets plot the sentiment over time/track number as a line plot. For the Twitter data, you will need to calculate the total sentiment for each tweet and group together by the date created.
+
+**Hint**: the timestamp will read in as a character string, you can convert it using the \texttt{as.POSIct()} function.
+
+
+
