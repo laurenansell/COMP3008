@@ -149,6 +149,17 @@ character_b %>%
 
 ```
 
+
+Is there a difference in the words contained in each of the lexicons? Is there a difference in the words each of the character uses?
+
+\textcolor{blue}{Character a uses the words "master" and "slave" more than character b but the word grace is common to both. There are more words in a larger size in the bing lecxicon for character a indicating that these are more frequent words for them. 
+The characters also have a difference in the most frequent word in the Afinn lexicon which are at opposite ends of the sentiment spectrum.}
+
+Do you agree with how all the words have been categorised in each lexicon? 
+
+\textcolor{blue}{For character a, the word masters has been classified as positive, given the context of the source material (Game of Thrones: A Dance with Dragons) this could be seen as inappropriate. For the nrc lexicon, the word worm has been highlighted as a commonly used word. This is part of the name of a character and so this could be removed from the data.}
+
+
 ## Exercise 2 - Sentiment Distribution
 
 For this exercise you will need to use the data in the \texttt{Music\_data.csv} file. This file contains the lyrics to each of the songs from an album. Using the Bing and Afinn lexicons calculate the total sentiment for each song and plot the distribution of the sentiment for the album using a histogram.
@@ -298,10 +309,57 @@ ggplot(afinn_sentiment,aes(x=tracknumber,y=total))+geom_line()+labs(x="Track num
 ```
 
 
-```{r}
+```{r,warning=FALSE,message=FALSE}
 
 ## Read in the data
 
-worldcupdata<-read.csv("../worldcup2022_tweets.csv")
+worldcupdata<-read.csv("worldcup2022_tweets.csv")
+
+
+## Look at the structure to see haw the timestamp has been encoded
+
+str(worldcupdata$date)
+
+## The date variable has been stored as a character so we need to convert it
+
+worldcupdata$date<-as.POSIXct(worldcupdata$date, format="%Y-%m-%d")
+
+## Check the format is correct. I have just kept the year, month and day but you can keep the 
+## time by altering the format part above
+
+str(worldcupdata$date)
+
+cleaned_tweets <- worldcupdata %>%
+  select(date,text) %>% 
+  mutate(tweetnumber = row_number()) %>% # create new variable denoting the track number
+  unnest_tokens(word, text)
+
+
+## Now get the sentiments as before
+
+worldcup_bing<-cleaned_tweets %>%
+  inner_join(get_sentiments("bing")) %>% ## get the sentiment for the words
+  count(date, sentiment) %>% ## count the sentiments for each day
+  spread(sentiment, n, fill = 0) %>% ## negative and positive sentiment in separate columns
+  mutate(score = positive - negative) ## score = net sentiment (positive - negative)
+
+
+
+ggplot(worldcup_bing,aes(x=date,y=score))+geom_line()+labs(x="Date",y="Sentiment score (Bing)")
+
+
+worldcup_afinn <- cleaned_tweets %>%
+  inner_join(get_sentiments("afinn")) %>%
+  count(date,word, value, sort = TRUE) %>%
+  mutate(word = reorder(word, n)) 
+
+worldcup_afinn<-worldcup_afinn%>%group_by(date)%>%
+  mutate(total=sum(value*n))
+
+
+worldcup_afinn<-worldcup_afinn[!duplicated(worldcup_afinn$date),]
+
+
+ggplot(worldcup_afinn,aes(x=date,y=total))+geom_line()+labs(x="Date",y="Sentiment score (Afinn)")
 
 ```
