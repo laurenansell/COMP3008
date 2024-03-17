@@ -167,7 +167,107 @@ toal_sentiment <- cleaned_music_words %>%
 
 **Hint**: you will need to create a new column to denote the track number.
 
-\newpage
+\textbf{Solution}
+
+```{r}
+## Read in the data 
+
+music_data<-read.csv("Music_data.csv")
+
+## Again we need to tokenise the data but keep the track data information
+
+cleaned_music_words <- music_data %>%
+  select(Text) %>% 
+  mutate(tracknumber = row_number()) %>% # create new variable denoting the track number
+  unnest_tokens(word, Text)
+
+head(cleaned_music_words)
+
+```
+
+```{r}
+## Distribution of sentiment using the bing lexicon
+
+bing_sentiment <- cleaned_music_words %>%
+  inner_join(get_sentiments("bing")) %>% ## get the sentiment for the words
+  count(tracknumber, sentiment) %>% ## count the sentiments for each track
+  spread(sentiment, n, fill = 0) %>% ## negative and positive sentiment in separate columns
+  mutate(score = positive - negative) ## score = net sentiment (positive - negative)
+
+
+## We can also calculate the mean and add this to the plot
+
+bing_sentiment_mean <- bing_sentiment %>% 
+  summarize(mean_score = mean(score)) 
+
+ggplot(bing_sentiment, 
+       aes(x = score)) + # Sentiment score on x-axis
+  geom_bar(fill = "lightgreen", colour = "darkgreen") + # geom_bar will do the tabulation for you :-)
+  geom_vline(aes(xintercept = mean_score), data = bing_sentiment_mean) +
+  # Add a vertical line at the mean score, calculated and stored in sentiment_means_nba above
+  geom_text(aes(x = mean_score, 
+                y = Inf, 
+                label = signif(mean_score, 3)), # Show to three significant figures
+            vjust = 1.3, 
+            data = bing_sentiment_mean) + 
+  # Add the mean as a number; vjust moves it down from the top of the plot
+  scale_x_continuous(breaks = seq(-15,25,by=5),  # Specify a suitable integer range for the x-axis
+                     minor_breaks = NULL) + # Show integers; set this to a suitably large range
+  labs(title = paste("Sentiments of tracks give a mean of", signif(bing_sentiment_mean$mean_score, 3)),
+       # Title that gives page name and mean sentiment score, to three significant figures
+       x = "Sentiment Score (Bing)", 
+       y = "Number of tracks")+
+  theme(plot.title = element_text(size = 14),
+        axis.title = element_text(size=12),
+        axis.text = element_text(size=12))
+
+
+```
+
+```{r}
+## Distribution of sentiment using the Afinn lexicon
+
+afinn_word_counts <- cleaned_music_words %>%
+  inner_join(get_sentiments("afinn")) %>%
+  count(tracknumber,word, value, sort = TRUE) %>%
+  mutate(word = reorder(word, n)) 
+
+
+afinn_sentiment<-afinn_word_counts%>%group_by(tracknumber)%>%
+  mutate(total=sum(value*n))
+
+## Remove duplicate values
+
+afinn_sentiment<-afinn_sentiment[!duplicated(afinn_sentiment$tracknumber),]
+
+
+afinn_sentiment_mean <- as.data.frame(mean(afinn_sentiment$total))   
+
+names(afinn_sentiment_mean)[1]<-"mean_score"
+
+ggplot(afinn_sentiment, 
+       aes(x = total)) + # Sentiment score on x-axis
+  geom_bar(fill = "lightgreen", colour = "darkgreen") + # geom_bar will do the tabulation for you :-)
+  geom_vline(aes(xintercept = mean_score), data = afinn_sentiment_mean) +
+  # Add a vertical line at the mean score, calculated and stored in sentiment_means_nba above
+  geom_text(aes(x = mean_score, 
+                y = Inf, 
+                label = signif(mean_score, 3)), # Show to three significant figures
+            vjust = 1.3, 
+            data = afinn_sentiment_mean) + 
+  # Add the mean as a number; vjust moves it down from the top of the plot
+  scale_x_continuous(breaks = seq(-25,55,by=5),  # Specify a suitable integer range for the x-axis
+                     minor_breaks = NULL) + # Show integers; set this to a suitably large range
+  labs(title = paste("Sentiments of tracks give a mean of", signif(afinn_sentiment_mean$mean_score, 3)),
+       # Title that gives page name and mean sentiment score, to three significant figures
+       x = "Sentiment Score (Afinn)", 
+       y = "Number of tracks")+
+  theme(plot.title = element_text(size = 14),
+        axis.title = element_text(size=12),
+        axis.text = element_text(size=12))
+
+
+```
 
 ## Exercise 3 - Sentiment Over Time
 
@@ -178,4 +278,30 @@ Using these datasets plot the sentiment over time/track number as a line plot. F
 **Hint**: the timestamp will read in as a character string, you can convert it using the \texttt{as.POSIct()} function.
 
 
+\textbf{Solution}
 
+
+```{r}
+
+## The music data first as it is already cleaned and in the correct format to plot
+
+## Bing sentiment
+
+ggplot(bing_sentiment,aes(x=tracknumber,y=score))+geom_line()+labs(x="Track number",
+                                                                   y="Sentiment score (Bing)")
+
+## Afinn sentiment
+
+ggplot(afinn_sentiment,aes(x=tracknumber,y=total))+geom_line()+labs(x="Track number",
+                                                                   y="Sentiment score (Afinn)")
+
+```
+
+
+```{r}
+
+## Read in the data
+
+worldcupdata<-read.csv("../worldcup2022_tweets.csv")
+
+```
