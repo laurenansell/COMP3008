@@ -19,7 +19,8 @@ library(tidyverse)
 library(tidytext)
 library(wordcloud)
 library(wordcloud2)
-library(tm)
+library(ggpubr)
+
 ```
 
 ## Exercise 1 - Bag-of-words
@@ -92,6 +93,53 @@ book_3_words_clean %>% group_by(word) %>% count(sort = TRUE) %>% head(15) %>%
 
 \textcolor{blue}{We see in text 1 that words such as wizard, magic and dragon are common, therefore we could classify this text as fantasy. In text 2 we see names of characters appearing frequently and the word love is a common word, this could lead us to classifying this text as romance. The final text, text 3 has Carrie as the most common word, this is probably the main charaters name and we see the word blood has a high frequency which would lead us to classifing this text as horror.}
 
+\textcolor{blue}{In some cases we may wish to remove additional words, here we may want to remove names and other words not included in the stop words such as didn't. The way to do this is shown below}
+
+
+```{r}
+## Create a dataframe containing our stopwords
+my_stop_words<-data.frame(word=c("wasn’t","didn’t","he’d","don’t","she’d","couldn’t",
+                                 "it’s","looked"))
+
+## remove these from our books
+book_1_words_clean<-book_1_words_clean %>% anti_join(my_stop_words)
+book_2_words_clean<-book_2_words_clean %>% anti_join(my_stop_words)
+book_3_words_clean<-book_3_words_clean %>% anti_join(my_stop_words)
+
+## Now plot the data
+book_1_words_clean %>% group_by(word) %>% count(sort = TRUE) %>% head(15) %>% 
+  ggplot( aes(x = word, y = n)) +
+  geom_col(fill = "cyan", color = "blue") +
+  coord_flip() +
+  labs(x = "Unique words",
+       y = "Frequency",
+       title = "Count of unique words found") + 
+  theme(axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 12, color = "black"),
+        title = element_text(size = 14))
+
+book_2_words_clean %>% group_by(word) %>% count(sort=TRUE) %>% head(15) %>% 
+  ggplot( aes(x = word, y = n)) +
+  geom_col(fill = "cyan", color = "blue") +
+  coord_flip() +
+  labs(x = "Unique words",
+       y = "Frequency",
+       title = "Count of unique words found") + 
+  theme(axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 12, color = "black"),
+        title = element_text(size = 14))
+
+book_3_words_clean %>% group_by(word) %>% count(sort = TRUE) %>% head(15) %>% 
+  ggplot( aes(x = word, y = n)) +
+  geom_col(fill = "cyan", color = "blue") +
+  coord_flip() +
+  labs(x = "Unique words",
+       y = "Frequency",
+       title = "Count of unique words found") + 
+  theme(axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 12, color = "black"),
+        title = element_text(size = 14))
+```
 
 
 
@@ -147,6 +195,32 @@ For the third exercise we will be calculating the tf-idf values for each text us
 
 \textbf{Solution}
 
+```{r}
+
+## If we combine all the data from the three books we can then plot them on the same graph using 
+## facet_wrap
+
+book_1_words_tf_idf<-book_1_words_clean %>% mutate(book="book 1")
+book_2_words_tf_idf<-book_2_words_clean %>% mutate(book="book 2")
+book_3_words_tf_idf<-book_3_words_clean %>% mutate(book="book 3")
+
+all_books_tf_idf<-rbind(book_1_words_tf_idf,book_2_words_tf_idf,book_3_words_tf_idf)
+
+tf_idf_df <- all_books_tf_idf %>%
+  count(book, word) %>%
+  bind_tf_idf(word, book, n) %>%
+  arrange(desc(tf_idf)) 
+
+tf_idf_df %>%
+  group_by(book) %>%
+  top_n(10, tf_idf) %>% ggplot(aes(x=word, y=tf_idf,fill=book))+
+  geom_bar(stat = "identity")+facet_wrap(.~book, scales = "free")+
+  coord_flip()+theme(legend.position = "none")
+
+```
+\textcolor{blue}{Once again we see character names being highlighted by the method. Magic is still being highlighted in book 1, reinforcing the classification as fantasy.}
+
+
 ## Exercise 4 - Zipf's Law
 
 In the final exercise, you will be applying Zipf's Law to each of the texts. For this we need the term frequency which is calculated in the function used for exercise 3. You will then need to create a column which contains the rank of each word, grouped by text, in descending order, i.e. the word with the highest tf value has rank 1.
@@ -155,3 +229,30 @@ Show your results on a line plot, plotting the log of the rank against the log o
 
 \textbf{Solution}
 
+```{r}
+
+## Put all the books together
+book_1_words<-book_1_words %>% mutate(book="book 1")
+book_2_words<-book_2_words %>% mutate(book="book 2")
+book_3_words<-book_3_words %>% mutate(book="book 3")
+
+all_books<-rbind(book_1_words,book_2_words,book_3_words)
+
+
+zipfs_law<-all_books %>%
+  count(book,word) %>%
+  bind_tf_idf(word,book,n)
+
+zipfs_law<-zipfs_law %>%  arrange(desc(tf)) %>% group_by(book) %>% 
+  mutate(rank=row_number())
+
+## Plot all the data together
+
+ggplot(zipfs_law,aes(x=log(rank),y=log(tf),col=book))+geom_line(linewidth=1)+
+  geom_smooth(method = "lm",se=FALSE, linetype=2, linewidth=0.5)+
+  stat_regline_equation(label.x =4.5)
+
+```
+
+
+\textcolor{blue}{Books 1 and 3 have very similar equations, book 2 stands out as being very different. When making the classifications, this result would lead us to either classifing books 1 and 3 to the same genre or to genres which could be very closely linked.}
