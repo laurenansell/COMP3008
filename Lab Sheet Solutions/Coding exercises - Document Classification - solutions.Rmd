@@ -20,6 +20,8 @@ library(tidytext)
 library(wordcloud)
 library(wordcloud2)
 library(ggpubr)
+library(igraph)
+library(ggraph)
 
 ```
 
@@ -188,6 +190,146 @@ As with the first exercise, you will need to ensure that stop words have been re
 Visualise the results as a word cloud and a network plot showing the connections within the text.
 
 \textbf{Solution}
+
+\textcolor{blue}{Below is the code for 2,3 and 4 -grams on the first book only. For the other two books the input needs to be altered but the stucture and logic of the code remains the same}
+
+```{r,eval=FALSE}
+## bigrams
+book_1_2_grams<- book_1 %>%
+  dplyr::select(V1) %>%
+  unnest_tokens(paired_words, V1, token = "ngrams", n = 2)
+
+
+book_1_2_grams_seperated <- book_1_2_grams %>%
+  separate(paired_words, c("word1", "word2"), sep = " ")
+
+book_1_2_grams_seperated <- book_1_2_grams_seperated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word)
+
+book_1_bigrams <- book_1_2_grams_seperated %>% 
+  count(word1, word2, sort = TRUE)
+
+book_1_bigrams<-book_1_bigrams %>% na.omit()
+
+book_1_bigrams_graph <- book_1_bigrams %>%
+  filter(n > 2) %>%
+  graph_from_data_frame()
+ggraph(book_1_bigrams_graph, layout = "fr") +
+  geom_edge_link() +
+  geom_node_point() +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1,size=4)+
+  theme_graph(base_size=10)+
+  ggtitle("Network of words")
+
+## 3-grams
+
+book_1_3_grams<- book_1 %>%
+  dplyr::select(V1) %>%
+  unnest_tokens(trip_words, V1, token = "ngrams", n = 3)
+
+
+book_1_3_grams_seperated <- book_1_3_grams %>%
+  separate(trip_words, c("word1", "word2","word3"), sep = " ")
+
+book_1_3_grams_seperated <- book_1_3_grams_seperated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  filter(!word3 %in% stop_words$word)
+
+book_1_tripgrams <- book_1_3_grams_seperated %>% 
+  count(word1, word2,word3, sort = TRUE)
+
+book_1_tripgrams<-book_1_tripgrams %>% na.omit()
+
+book_1_tripgrams_graph <- book_1_tripgrams %>%
+  filter(n > 1) %>%
+  graph_from_data_frame()
+ggraph(book_1_tripgrams_graph, layout = "fr") +
+  geom_edge_link() +
+  geom_node_point() +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1,size=4)+
+  theme_graph(base_size=10)+
+  ggtitle("Network of words")
+
+## 4-grams
+book_1_4_grams<- book_1 %>%
+  dplyr::select(V1) %>%
+  unnest_tokens(quad_words, V1, token = "ngrams", n = 4)
+
+
+book_1_4_grams_seperated <- book_1_4_grams %>%
+  separate(quad_words, c("word1", "word2","word3","word4"), sep = " ")
+
+book_1_4_grams_seperated <- book_1_4_grams_seperated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  filter(!word3 %in% stop_words$word) %>%
+  filter(!word4 %in% stop_words$word)
+
+book_1_quadgrams <- book_1_4_grams_seperated %>% 
+  count(word1, word2,word3,word4, sort = TRUE)
+
+book_1_quadgrams<-book_1_quadgrams %>% na.omit()
+
+book_1_quadgrams_graph <- book_1_quadgrams %>%
+  filter(n > 0) %>%
+  graph_from_data_frame()
+ggraph(book_1_quadgrams_graph, layout = "fr") +
+  geom_edge_link() +
+  geom_node_point() +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1,size=4)+
+  theme_graph(base_size=10)+
+  ggtitle("Network of words")
+```
+
+![](2-gram.png)
+
+![](3-grams.png)
+
+![](4-grams.png)
+
+
+```{r}
+## Wordclouds
+
+book_1_2_grams<- book_1 %>%
+  dplyr::select(V1) %>%
+  unnest_tokens(paired_words, V1, token = "ngrams", n = 2)
+
+wordcloud(book_1_2_grams
+        , scale=c(5,0.5)     # Set min and max scale
+        , max.words=50      # Set top n words
+        , random.order=FALSE # Words in decreasing freq
+        , rot.per=0.35       # % of vertical words
+        , use.r.layout=FALSE # Use C++ collision detection
+        , colors=brewer.pal(8, "Dark2"))
+
+book_1_3_grams<- book_1 %>%
+  dplyr::select(V1) %>%
+  unnest_tokens(trip_words, V1, token = "ngrams", n = 3)
+
+wordcloud(book_1_3_grams
+        , scale=c(5,0.5)     # Set min and max scale
+        , max.words=50      # Set top n words
+        , random.order=FALSE # Words in decreasing freq
+        , rot.per=0.35       # % of vertical words
+        , use.r.layout=FALSE # Use C++ collision detection
+        , colors=brewer.pal(8, "Dark2"))
+
+book_1_4_grams<- book_1 %>%
+  dplyr::select(V1) %>%
+  unnest_tokens(quad_words, V1, token = "ngrams", n = 4)
+
+wordcloud(book_1_4_grams
+        , scale=c(5,0.5)     # Set min and max scale
+        , max.words=50      # Set top n words
+        , random.order=FALSE # Words in decreasing freq
+        , rot.per=0.35       # % of vertical words
+        , use.r.layout=FALSE # Use C++ collision detection
+        , colors=brewer.pal(8, "Dark2"))
+
+```
 
 ## Exercise 3 - tf-idf
 
