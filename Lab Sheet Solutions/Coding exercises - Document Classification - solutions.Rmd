@@ -19,7 +19,7 @@ library(tidyverse)
 library(tidytext)
 library(wordcloud)
 library(wordcloud2)
-
+library(tm)
 ```
 
 ## Exercise 1 - Bag-of-words
@@ -30,7 +30,7 @@ Visualise the results as a word cloud and a bar chart showing the top 15 most co
 
 \textbf{Solution}
 
-```{r}
+```{r,message=FALSE,warning=FALSE}
 
 ## Read in the data
 book_1<-read.delim("../Lab Sheets/text_1.txt",header = FALSE)
@@ -54,6 +54,74 @@ book_3_words_clean<-book_3_words %>% anti_join(stop_words)
 Visualise as a bar plot:
 
 ```{r}
+## Plotting the top 15 words in a bar chart
+
+book_1_words_clean %>% group_by(word) %>% count(sort = TRUE) %>% head(15) %>% 
+  ggplot( aes(x = word, y = n)) +
+  geom_col(fill = "cyan", color = "blue") +
+  coord_flip() +
+  labs(x = "Unique words",
+       y = "Frequency",
+       title = "Count of unique words found") + 
+  theme(axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 12, color = "black"),
+        title = element_text(size = 14))
+
+book_2_words_clean %>% group_by(word) %>% count(sort=TRUE) %>% head(15) %>% 
+  ggplot( aes(x = word, y = n)) +
+  geom_col(fill = "cyan", color = "blue") +
+  coord_flip() +
+  labs(x = "Unique words",
+       y = "Frequency",
+       title = "Count of unique words found") + 
+  theme(axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 12, color = "black"),
+        title = element_text(size = 14))
+
+book_3_words_clean %>% group_by(word) %>% count(sort = TRUE) %>% head(15) %>% 
+  ggplot( aes(x = word, y = n)) +
+  geom_col(fill = "cyan", color = "blue") +
+  coord_flip() +
+  labs(x = "Unique words",
+       y = "Frequency",
+       title = "Count of unique words found") + 
+  theme(axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 12, color = "black"),
+        title = element_text(size = 14))
+```
+
+\textcolor{blue}{The top 15 words from each text do not help us identify the genre. For text 2 the word abernathy could represent the name of a main character or a place of importance in the text. The word abandoned appears frequently in both texts which could indicate that the genres are closely related for these two texts.}
+
+\textcolor{blue}{The bar plot for text shows no words only letter and is therefore not useful at all. We may wish to preform some additional cleaning by removing words of our own choosing.}
+
+```{r,message=FALSE,warning=FALSE}
+
+## Remove all the numbers from text 3
+
+
+book_3$V1 <- removeNumbers(book_3$V1)
+
+book_3_words<-book_3 %>% select(V1) %>%  unnest_tokens(word, V1)
+
+book_3_words_clean<-book_3_words %>% anti_join(stop_words)
+
+## Define your stopwords, you can either define different words for each text separately or all in one go
+
+my_stop_words<-data.frame(word = c("aber","abernathy","abernathy’s"))
+  
+
+## Remove the stop words
+
+book_1_words_clean<-book_1_words_clean %>% anti_join(my_stop_words)
+book_2_words_clean<-book_2_words_clean %>% anti_join(my_stop_words)
+book_3_words_clean<-book_3_words_clean %>% anti_join(my_stop_words)
+```
+
+Visualise as a bar plot:
+
+```{r}
+## Plotting the top 15 words in a bar chart
+
 book_1_words_clean %>% group_by(word) %>% count() %>% head(15) %>% 
   ggplot( aes(x = word, y = n)) +
   geom_col(fill = "cyan", color = "blue") +
@@ -76,7 +144,7 @@ book_2_words_clean %>% group_by(word) %>% count() %>% head(15) %>%
         axis.title = element_text(size = 12, color = "black"),
         title = element_text(size = 14))
 
-book_2_words_clean %>% group_by(word) %>% count() %>% head(15) %>% 
+book_3_words_clean %>% group_by(word) %>% count() %>% head(15) %>% 
   ggplot( aes(x = word, y = n)) +
   geom_col(fill = "cyan", color = "blue") +
   coord_flip() +
@@ -87,6 +155,39 @@ book_2_words_clean %>% group_by(word) %>% count() %>% head(15) %>%
         axis.title = element_text(size = 12, color = "black"),
         title = element_text(size = 14))
 ```
+
+\textcolor{blue}{After some additional cleaning, we still don't have enough information here to make the classification.}
+
+```{r,eval=FALSE}
+## Word cloud for each text
+
+book_1_text_wordcloud<- book_1_words_clean %>%
+  count(word, sort = TRUE) %>% 
+  mutate(freq = n / sum(n))
+
+book_2_text_wordcloud<- book_2_words_clean %>%
+  count(word, sort = TRUE) %>% 
+  mutate(freq = n / sum(n))
+
+book_3_text_wordcloud<- book_3_words_clean %>%
+  count(word, sort = TRUE) %>% 
+  mutate(freq = n / sum(n))
+
+book_1_text_wordcloud<-book_1_text_wordcloud %>% select(word,freq)
+book_2_text_wordcloud<-book_2_text_wordcloud %>% select(word,freq)
+book_3_text_wordcloud<-book_3_text_wordcloud %>% select(word,freq)
+
+wordcloud2(book_1_text_wordcloud,color = "random-dark",shape="star")
+wordcloud2(book_2_text_wordcloud,color = "random-dark",shape="heart")
+wordcloud2(book_3_text_wordcloud,figPath = "skull.jpg")
+
+```
+
+![](text_1_wordcloud.png)
+
+![](text_2_wordcloud.png)
+
+![](text_3_wordcloud.png)
 
 ## Exercise 2 - N-grams
 
