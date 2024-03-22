@@ -90,7 +90,7 @@ book_3_words_clean %>% group_by(word) %>% count(sort = TRUE) %>% head(15) %>%
         title = element_text(size = 14))
 ```
 
-\textcolor{blue}{We see in text 1 that words lsuch as wizard, magic and dragon are common, therefore we could classify this text as fantasy. In text 2 we see names of characters appearing frequently and the word love is a common word, this could lead us to classifying this text as romance. The final text, text 3 has Carrie as the most common word, this is probably the main charaters name and we see the word blood has a high frequency which would lead us to classifing this text as horror.}
+\textcolor{blue}{We see in text 1 that words such as wizard, magic and dragon are common, therefore we could classify this text as fantasy. In text 2 we see names of characters appearing frequently and the word love is a common word, this could lead us to classifying this text as romance. The final text, text 3 has Carrie as the most common word, this is probably the main charaters name and we see the word blood has a high frequency which would lead us to classifing this text as horror.}
 
 
 
@@ -125,7 +125,9 @@ wordcloud2(book_3_text_wordcloud,figPath = "skull.jpg")
 ![](text_2_wordcloud.png)
 
 ![](text_3_wordcloud.png)
-\textcolor{blue}{}
+\textcolor{blue}{In all the word coulds we see character names appearing the most frequently. We see in text 1 that words such as wizard, magic and dragon are common, therefore we could classify this text as fantasy. In text 2 we see names of characters appearing frequently and the word love is a common word, this could lead us to classifying this text as romance. The final text, text 3 has Carrie as the most common word, this is probably the main charaters name and we see the word blood has a high frequency which would lead us to classifing this text as horror.}
+
+\textcolor{red}{\textbf{Making these wordclouds}: These wordclouds are made using the package wordcloud2. They will not appear in the usual Plots pane but in the Viewer one instead. They are also dynamic, they don't add all the words in one go but in a sequence. If you want to use a different shape from a .jpg file, there is a bug with this. It will not appear in the Viewer pane, you will need to view this in your browser by clicking the window with an arrow icon immediately above the white area where the plot should appear.}
 
 
 ## Exercise 2 - N-grams
