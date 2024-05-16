@@ -120,3 +120,5 @@ Have look at the help file for \texttt{ggplot2} and customise your plot. On my p
 ggplot(df,aes(x=month,y=production))+geom_point(size=5,col="hotpink")+geom_smooth(method="lm",col="red")+theme(axis.title.x = element_text(size=16, colour = "blue"),
                                                                                                      axis.title.y = element_text(size=20, colour = "darkgreen"))
 ```
+
+## Exercise 5
