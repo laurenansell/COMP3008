@@ -271,3 +271,4 @@ top_20_emojis %>%
        y = "Emoji name",
        fill = "Emoji category",
        title = "The 20 most popular Emojis")
+

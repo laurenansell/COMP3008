@@ -152,12 +152,11 @@ character_b %>%
 
 Is there a difference in the words contained in each of the lexicons? Is there a difference in the words each of the character uses?
 
-\textcolor{blue}{Character a uses the words "master" and "slave" more than character b but the word grace is common to both. There are more words in a larger size in the bing lecxicon for character a indicating that these are more frequent words for them. 
-The characters also have a difference in the most frequent word in the Afinn lexicon which are at opposite ends of the sentiment spectrum.}
+\textcolor{blue}{Character a uses the words connected to crime such as addict, assault and crime where as character b frequently uses words to describe themselves/others such as threatening, angry and pain. The word like and right are both the most common positive word and perhaps we should think about removing these to better identify the differences between the characters. The characters also have a difference in the most frequent word in the Afinn lexicon which are at opposite ends of the sentiment spectrum.}
 
 Do you agree with how all the words have been categorised in each lexicon? 
 
-\textcolor{blue}{For character a, the word masters has been classified as positive, given the context of the source material (Game of Thrones: A Dance with Dragons) this could be seen as inappropriate. For the nrc lexicon, the word worm has been highlighted as a commonly used word. This is part of the name of a character and so this could be removed from the data.}
+\textcolor{blue}{For both these characters the words appear to be classified correctly but if the text was known this would give extra insight.}
 
 
 ## Exercise 2 - Sentiment Distribution
