@@ -2,9 +2,12 @@ library(tidyverse)
 library(tidytext)
 library(textdata)
 library(wordcloud)
+library(RColorBrewer)
 library(wordcloud2)
 library(ISLR)
 library(plot3D)
+library(glue)
+library(datasauRus)
 
 ## Barchart
 
@@ -33,15 +36,51 @@ z <- table(x_c, y_c)
 hist3D(z=z, border="black")
 
 
-## Scatterplot
+ggplot(airquality,aes(x=Temp))+geom_histogram(bins=15,col="black",fill="darkgreen")+
+  theme(axis.title = element_text(size=16),
+        axis.text = element_text(size = 14))
+
 
 ## Line graph
 
+airquality<-airquality %>% mutate(Date=make_date(year = 1973,month = Month,day=Day))
+
+
+ggplot()+geom_line(data=airquality,aes(x=Date,y=Wind),col="blue",linewidth=1.5)+
+  theme(axis.title = element_text(size=16),
+        axis.text = element_text(size = 14))
+
 ## Heatmap
+
+## usng the same data as the 3D histogram
+image2D(z=z, border="black")
+
+##  Simulate data:
+x <- c(rep(1,1000))
+y <- c(rep(1,1000))
+
+##  Create cuts:
+x_c <- cut(x, 20)
+y_c <- cut(y, 20)
+
+##  Calculate joint counts at cut levels:
+z <- table(x_c, y_c)
 
 image2D(z=z, border="black")
 
 ## Boxplots
+
+box_data<-datasaurus_dozen %>% filter(dataset==c("slant_up","slant_down"))
+
+
+ggplot()+geom_boxplot(data = box_data,aes(x=x, fill = dataset))+
+  theme(axis.title = element_text(size=16),
+        axis.text = element_text(size = 14),legend.position = "none")
+
+ggplot(iris, aes(x = Species, y = Sepal.Length)) +
+  geom_boxplot()+
+  theme(axis.title = element_text(size=16),
+        axis.text = element_text(size = 14),legend.position = "none")
 
 ## Word cloud
 
@@ -51,14 +90,30 @@ wordcloud_good_data <- wordcloud_good_data %>%
   select(V1) %>% 
   unnest_tokens(word, V1)
 
-wordcloud_good_data %>%
-  count(word, sort = TRUE) %>%
-  reshape2::acast(word, value.var = "n", fill = 0) %>%
-  comparison.cloud(colors = c("blue", "red","gold","green","purple","hotpink","seagreen"),
-                   max.words = 100)
+wordcloud_good_data <- wordcloud_good_data %>% count(word, sort=TRUE)
+
+set.seed(2)
+
+wordcloud(words = wordcloud_good_data$word, freq = wordcloud_good_data$n, 
+          min.freq = 1,          
+          max.words=200, random.order=FALSE, rot.per=0.35,            
+          colors=brewer.pal(8, "Dark2"))
 
 
-wordcloud_bad_data
+wordcloud_bad_data<-read.csv("./Lecture Slides/likert_example.csv")
+
+wordcloud_bad_data <- wordcloud_bad_data %>%
+  select(Q1) %>% 
+  unnest_tokens(word, Q1)
+
+wordcloud_bad_data <- wordcloud_bad_data %>% count(word, sort=TRUE)
+
+set.seed(2)
+
+wordcloud(words = wordcloud_bad_data$word, freq = wordcloud_bad_data$n, 
+          min.freq = 1,          
+          max.words=200, random.order=FALSE, rot.per=0.35,            
+          colors=brewer.pal(8, "Dark2"))
 
 ## Network
 
@@ -69,3 +124,15 @@ wordcloud_bad_data
 ## Radar
 
 ## Table
+
+datasaurus_dozen %>% 
+  group_by(dataset) %>% 
+  summarize(
+    mean_x    = mean(x),
+    mean_y    = mean(y),
+    std_dev_x = sd(x),
+    std_dev_y = sd(y),
+    corr_x_y  = cor(x, y)
+  )
+
+

@@ -1,0 +1,11 @@
+Person,Q1,Q2,Q3,Gender
+P1,Neutral,Strongly Agree,Neutral,M
+P2,Strongly Disagree,Strongly Agree,Neutral,M
+P3,Disagree,Strongly Agree,Neutral,F
+P4,Neutral,Neutral,Agree,F
+P5,Agree,Strongly Agree,Disagree,F
+P6,Strongly Agree,Strongly Agree,Neutral,M
+P7,Strongly Agree,Strongly Agree,Disagree,M
+P8,Disagree,Strongly Disagree,Neutral,M
+P9,Disagree,Agree,Agree,M
+P10,Agree,Disagree,Strongly Agree,F
