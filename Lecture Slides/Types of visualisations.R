@@ -115,15 +115,26 @@ wordcloud(words = wordcloud_bad_data$word, freq = wordcloud_bad_data$n,
           max.words=200, random.order=FALSE, rot.per=0.35,            
           colors=brewer.pal(8, "Dark2"))
 
-## Network
 
-## Map
-
-## TreeMap
-
-## Radar
 
 ## Table
+
+norm<-rnorm(100)
+unif<-runif(100)
+exp<-rexp(100)
+gamma<-rgamma(100,1)
+
+mean(norm)
+sd(nrom)
+
+mean(unif)
+sd(unif)
+
+mean(exp)
+sd(exp)
+
+mean(gamma)
+sd(gamma)
 
 datasaurus_dozen %>% 
   group_by(dataset) %>% 
