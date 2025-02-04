@@ -1,6 +1,6 @@
 ---
 title: "COMP3008 - Big Data Analytics"
-author: "Workshop 7 - Introduction to R"
+author: "Workshop 7 - Introduction to Visualisation in R"
 output: pdf_document
 ---
 
@@ -8,7 +8,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This worksheet is designed to give you an introduction to coding in R. R is a programming language for statistical computing and data visualization. It has been adopted in the fields of data mining, bioinformatics, and data analysis.
+This worksheet is designed to give you an introduction to creating visualisations in R. R is a programming language for statistical computing and data visualization. It has been adopted in the fields of data mining, bioinformatics, and data analysis.
 
 Like Python, R uses libraries of functions to carry out tasks which can be imported as follows:
 
