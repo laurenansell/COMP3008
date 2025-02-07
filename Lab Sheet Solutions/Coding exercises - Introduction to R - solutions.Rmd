@@ -1,6 +1,6 @@
 ---
 title: "COMP3008 - Big Data Analytics"
-author: "Workshop 7 - Introduction to R"
+author: "Workshop 7 - Introduction to VisualisationR"
 output: pdf_document
 ---
 
@@ -8,7 +8,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This worksheet is designed to give you an introduction to coding in R. R is a programming language for statistical computing and data visualization. It has been adopted in the fields of data mining, bioinformatics, and data analysis.
+This worksheet is designed to give you an introduction to creating visualisations in R. R is a programming language for statistical computing and data visualization. It has been adopted in the fields of data mining, bioinformatics, and data analysis.
 
 Like Python, R uses libraries of functions to carry out tasks which can be imported as follows:
 
@@ -16,112 +16,7 @@ Like Python, R uses libraries of functions to carry out tasks which can be impor
 library(readr) # Loads in the library readr
 ```
 
-Below are some simple exercises designed to get you more familiar with the way R works. 
-
-## Exercise 1 - Creating data objects in R
-
-Consider the following data:
-
-\begin{equation*}
-x=\begin{pmatrix}26\\
-36\\
-59\\
-24\\
-21\\
-47\\
-65\\
-16\\
-56\\
-33\\
-\end{pmatrix}
-\end{equation*}
-
-\begin{equation*}
-y=\begin{pmatrix}55\\
-49\\
-33\\
-44\\
-39\\
-59\\
-47\\
-62\\
-56\\
-54\\
-\end{pmatrix}
-\end{equation*}
-
-Create two R objects for these data vectors, naming them x\_vector and y\_vector.
-
-\textbf{Solution}
-
-```{r}
-x_vector<-c(26,36,59,24,21,47,65,16,56,33)
-
-y_vector<-c(55,49,33,44,39,59,47,62,56,54)
-
-```
-
-## Exercise 2 - Numerical summaries and data manipulation in R
-
-Find the mean and standard deviation of x\_vector and y\_vector.
-
-Remove both the second, fifth and sixth element from both vectors and give these objects a new name. Now find the mean and standard deviation of these new vectors.
-
-Create a data frame from the new vectors you created.
-
-\textbf{Solution:}
-
-```{r}
-mean(x_vector) ## mean of x_vector
-sd(x_vector)  ## standard deviation of x_vector
-mean(y_vector)  ## mean of y_vector
-sd(y_vector)  ## standard deviation of y_vector
-
-## Remove the second, fifth and sixth elements
-x_vector_removed<-x_vector[-c(2,5,6)]
-y_vector_removed<-y_vector[-c(2,5,6)]
-
-x_vector_removed
-y_vector_removed
-
-## Alternatively
-x_vector_removed<-x_vector[c(1,3,4,7,8,9,10)]
-y_vector_removed<-y_vector[c(1,3,4,7,8,9,10)]
-
-x_vector_removed
-y_vector_removed
-
-mean(x_vector_removed)
-sd(x_vector_removed)
-mean(y_vector_removed)
-sd(y_vector_removed)
-
-xy_dataframe<-as.data.frame(cbind(x_vector_removed,y_vector_removed))
-
-xy_dataframe
-
-```
-
-
-
-## Exercise 3 - Reading data into R
-
-On the DLE is a file named \texttt{imbd\_top\_1000\_movies.csv}, use the function \texttt{read\_csv} to load the file into R. 
-
-Once the data is loaded in, you can use the functions \texttt{head} and \texttt{tail} to view the first and last 6 rows of data.
-
-\textbf{Solution}
-
-```{r}
-imdb_data<-read.csv("imdb_top_1000_movies.csv")
-
-head(imdb_data)
-
-tail(imdb_data)
-
-```
-
-## Exercise 4 - Plotting data using ggplot2
+## Exercise 1 - Plotting data using ggplot2
 
 A small company has recorded the following data on volume and costs of production for the last ten months:
 
@@ -181,4 +76,63 @@ ggplot(df,aes(x=month,y=production))+geom_point(size=5,col="hotpink")+
   geom_smooth(method="lm",col="red")+
   theme(axis.title.x = element_text(size=16, colour = "blue"),                            
         axis.title.y = element_text(size=20, colour = "darkgreen"))
+```
+
+
+## Exercise 2 - Reading data into R
+
+On the DLE is a file named \texttt{imbd\_top\_1000\_movies.csv}, use the function \texttt{read\_csv} to load the file into R. 
+
+Once the data is loaded in, you can use the functions \texttt{head} and \texttt{tail} to view the first and last 6 rows of data.
+
+\textbf{Solution}
+
+```{r}
+imdb_data<-read.csv("imdb_top_1000_movies.csv")
+
+head(imdb_data)
+
+tail(imdb_data)
+
+```
+
+## Exercise 3
+
+First look at the structure of the data:
+
+```{r}
+str(imdb_data)
+```
+
+We see that runtime is currently being stored as a character string. We want to extract the numerical value from this.
+
+```{r}
+
+imdb_data$Runtime<-gsub(" min","",imdb_data$Runtime) ## Removes the character elements
+
+imdb_data$Runtime<-as.numeric(imdb_data$Runtime) ## converts to numerical data.
+imdb_data$Released_Year<-as.numeric(imdb_data$Released_Year)
+
+```
+
+Now we can perform the analysis on the data
+
+```{r}
+library(dplyr)
+
+runtime_summary<-imdb_data %>% select(Runtime,Released_Year) %>% 
+  group_by(Released_Year) %>% summarise(ave_runtime=mean(Runtime))
+
+```
+
+Produce a plot to show this:
+
+```{r,warning=FALSE}
+
+ggplot(runtime_summary,aes(x=Released_Year,y=ave_runtime))+geom_line()+
+  labs(title = "Plot of the average rumtime for movies in the IMDB top 1000 movies database")+
+  xlab("Year of Release")+ylab("Average runtime (mins)")+
+  theme(axis.title.x = element_text(size=14),                            
+        axis.title.y = element_text(size=14))
+
 ```

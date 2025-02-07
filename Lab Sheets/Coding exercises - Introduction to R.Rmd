@@ -16,58 +16,7 @@ Like Python, R uses libraries of functions to carry out tasks which can be impor
 library(readr) # Loads in the library readr
 ```
 
-Below are some simple exercises designed to get you more familiar with the way R works. 
-
-## Exercise 1 - Creating data objects in R
-
-Consider the following data:
-
-\begin{equation*}
-x=\begin{pmatrix}26\\
-36\\
-59\\
-24\\
-21\\
-47\\
-65\\
-16\\
-56\\
-33\\
-\end{pmatrix}
-\end{equation*}
-
-\begin{equation*}
-y=\begin{pmatrix}55\\
-49\\
-33\\
-44\\
-39\\
-59\\
-47\\
-62\\
-56\\
-54\\
-\end{pmatrix}
-\end{equation*}
-
-Create two R objects for these data vectors, naming them x\_vector and y\_vector.
-
-## Exercise 2 - Numerical summaries and data manipulation in R
-
-Find the mean and standard deviation of x\_vector and y\_vector.
-
-Remove both the second, fifth and sixth element from both vectors and give these objects a new name. Now find the mean and standard deviation of these new vectors.
-
-Create a data frame from the new vectors you created.
-
-
-## Exercise 3 - Reading data into R
-
-On the DLE is a file named \texttt{imbd\_top\_1000\_movies.csv}, use the function \texttt{read\_csv} to load the file into R. 
-
-Once the data is loaded in, you can use the functions \texttt{head} and \texttt{tail} to view the first and last 6 rows of data.
-
-## Exercise 4 - Plotting data using ggplot2
+## Exercise 1 - Plotting data using ggplot2
 
 A small company has recorded the following data on volume and costs of production for the last ten months:
 
@@ -83,7 +32,7 @@ Costs (£1,000s) &7 &11& 12& 19& 22& 20& 16& 13& 24& 20\\
 \end{center}
 \end{table}
 
-Create a data frame containing variables production and costs, then plot these data. You will need to load in the library \texttt{ggplot2}.
+Create a data frame containing variables production and costs, then plot these data. You will need to load in the library \texttt{ggplot2} and use the \texttt{geom\_point()} option.
 
 You should end up with the following:
 
@@ -107,10 +56,11 @@ df<-cbind(df,month)
 ggplot(df,aes(x=month,y=production))+geom_point()
 ```
 
-The package \texttt{ggplot2} offers large flexibility of plotting options and control over the plot. Each function has a help page available which can be accessed like so:
+The package \texttt{ggplot2} offers large flexibility of plotting options and control over the plot. Each of the plot types in the \texttt{ggplot2} package starts with \texttt{geom\_}. Each function has a help page available which can be accessed like so:
 
 ```{r,eval=FALSE}
 ?mean()
+?geom_boxplot()
 ```
 
 Have look at the help file for \texttt{ggplot2} and customise your plot. On my plot below I have added a linear model and specified the colour of the line, made the points bigger and changed the colour, increased the size and changed the colour of the axis labels.
@@ -121,4 +71,21 @@ ggplot(df,aes(x=month,y=production))+geom_point(size=5,col="hotpink")+geom_smoot
                                                                                                      axis.title.y = element_text(size=20, colour = "darkgreen"))
 ```
 
-## Exercise 5
+
+## Exercise 2 - Reading data into R
+
+Often we require to import data to begin manipulating it. 
+
+On the DLE is a file named \texttt{imbd\_top\_1000\_movies.csv}, use the function \texttt{read\_csv} to load the file into R. There is also the \texttt{read.csv()} function, but this function does not handle large datasets as efficiently.  
+
+Once the data is loaded in, you can use the functions \texttt{head} and \texttt{tail} to view the first and last 6 rows of data.
+
+
+## Exercise 3
+
+Using the IMBD data, investigate how the run times of movies have changed over the years and plot this information.
+
+
+## Exercise 4
+
+Using the IMBD data, create the most hideous, misleading plot you can.
