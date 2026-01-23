@@ -1,0 +1,61 @@
+---
+title: "COMP3008 - Big Data Analytics"
+author: "Workshop 6 - Data Visualisation Part 1"
+date: "2026-01-23"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This worksheet is designed to give you an introduction to creating visualisations in R. R is a programming language for statistical computing and data visualization. It has been adopted in the fields of data mining, bioinformatics, and data analysis.
+
+Like Python, R uses libraries of functions to carry out tasks which can be imported as follows:
+
+```{r, warning=FALSE}
+library(readr) # Loads in the library readr
+```
+
+In this workshop we will be using the IMDB database (\texttt{imbd\_top\_1000\_movies.csv}) and only the plotting functions with R. We bring the data into your environment using the code below:
+
+```{r}
+
+IMDB_data<-read_csv("imdb_top_1000_movies.csv")
+
+```
+
+
+Once the data is loaded in, you can use the functions \texttt{head} and \texttt{tail} to view the first and last 6 rows of data to ensure it has been loaded in correctly.
+
+
+## Exercise 1
+
+As a statistical software, R can produce a number of different types of plots without the need for external libraries. 
+
+The first exercise is to use the \texttt{plot()} function with just the IMDB Rating column.
+
+You should end up with the following:
+
+```{r,echo=FALSE}
+plot(IMDB_data$IMDB_Rating)
+```
+Not the most intuitive plot.
+
+## Exercise 2
+
+We can specify which particular type of plot we want R to make by using the plot name. Recreate the plot below using the \texttt{barplot()} function and the IMDB Rating variable.
+
+```{r,echo=FALSE}
+barplot(IMDB_data$IMDB_Rating)
+```
+
+
+
+## Exercise 3
+
+Basic plotting in R has a simple syntax, you can find a cheatsheet for basic plotting [here](https://publish.illinois.edu/johnrgallagher/files/2015/10/BaseGraphicsCheatsheet.pdf). 
+
+
+Using the IMBD data and the base R plotting functions, create the most hideous, misleading plot you can. If you wish to submit your wonderful creation, and I will show case your wonderful creations.
