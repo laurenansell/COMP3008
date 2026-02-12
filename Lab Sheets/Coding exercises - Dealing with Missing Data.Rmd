@@ -1,0 +1,59 @@
+---
+title: "COMP3008 - Big Data Analytics"
+author: "Workshop 8 - Dealing with Missing Data"
+date: "2026-02-10"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This worksheet looks at various methods we can use to deal with missing data. For this worksheet you will need to be working with the dataset \texttt{covid\_wave3.csv}. This dataset contains information collected from three UK longitudinal studies which were adapted to capture information relating to the COVID-19 pandemic. 
+
+
+## Exercise 1
+
+For the first exercise, we will be using the data about smoking behaviour. The encoding for the responses to the smoking/vaping behaviour questions are given in the table below:
+
+\begin{center}
+\begin{tabular}{c|c}
+Value & Response\\
+\hline
+-9.0 & Don't want to answer\\
+-8.0 & Don't know\\
+-1.0 & Not applicable\\
+1.0 & Never smoked/used e-cig or vaping device\\
+2.0 & Used to smoke/vape but not at all now\\
+3.0 & Occasionally smokes/vapes but not daily\\
+4.0 & Smokes/used e-cig or vaping device every day
+\end{tabular}
+\end{center}
+
+By creating suitable plots/tables, decide if there is a relationship between the missingness seen in these variables and if so, use this relationship to deal with the missing data.
+
+## Exercise 2
+
+Using the information contained in the variables relating to the weight of the participant, remove all the missing values from the columns relating to the weight of the participant (columns: Weight\_kg, Weight\_stones and Weight\_pounds) and plot a histogram showing the distributions of these variables.
+
+
+## Exercise 3
+
+Weight should follow a normal distribution (symmetrical curve around the mean value), Using the information relating to how the participants weight was recorded (see table below), manipulate the data to create a unified metric for weight and plot the resulting distribution. Do not include any responses that did not wish to report their weight.
+
+
+\begin{center}
+\begin{tabular}{c|c}
+Value & Response\\
+\hline
+-1.0 & Not applicable\\
+1.0 & Kilograms\\
+2.0 & Stones and pounds\\
+3.0 & I do not wish to report my weight
+\end{tabular}
+\end{center}
+
+## Exercise 4
+
+For those individuals who did not wish to report their weight, replace the missing value with the mean value for those who did report their weight and plot the new distribution. Has your resulting plot changed from exerise 3 to 4?
