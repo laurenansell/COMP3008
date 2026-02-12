@@ -1,0 +1,60 @@
+---
+title: "COMP3008 - Big Data Analytics"
+author: "Workshop 7 - Data Visualisation Part 2"
+date: "2026-01-23"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This worksheet is designed to give you an opportunity to explore different plot types available in the \texttt{ggplot2} library.
+
+
+```{r, warning=FALSE}
+library(readr) # Loads in the library readr
+library(dplyr) # Library for data manipulation
+library(ggplot2) # Library for plotting
+```
+
+In this workshop we will be using the Pokemon database (\texttt{pokemon\_data.csv}) and only the plotting functions with the \texttt{ggplot2} package. We bring the data into your environment using the code below:
+
+```{r}
+
+pokemon_data<-read_csv("pokemon_data.csv")
+
+```
+
+
+Once the data is loaded in, you can use the functions \texttt{head()} and \texttt{tail()} to view the first and last 6 rows of data to ensure it has been loaded in correctly.
+
+
+## Exercise 1
+
+The first exercise is to explore how the base experience of each Pokemon and its HP are related.You need to recreate the plot below:
+
+```{r,echo=FALSE}
+
+ggplot(pokemon_data,aes(x=base_experience, y=hp))+geom_line(col="darkgreen",linewidth = 1.5,linetype = 2)+
+  theme(axis.title = element_text(size=14),
+        axis.text = element_text(size = 12))+
+  labs(x="Base Experience",y="HP")+
+  scale_x_continuous(breaks = seq(0,600, by=50))+
+  scale_y_continuous(breaks = seq(0,250,by=25))
+
+
+```
+
+## Exercise 2
+
+Selecting one categorical variable (e.g. type) and one numerical value (e.g weight) explore different method of visualisation for your two selected variables, e.g. a box plot against a histogram. Think about what information which of the visualisations are giving you.
+
+
+## Exercise 3
+
+The plotting in \texttt{ggplot2} has a more complicated syntax compared to base R and this gives you far more flexability and options. You can find a cheatsheet for \texttt{ggplot2} plotting [here](https://rstudio.github.io/cheatsheets/data-visualization.pdf). 
+
+
+Using any dataset you wish and the \texttt{ggplot2} functionality, create the most hideous, misleading plot you can. If you wish to submit your wonderful creation, they will show cased as part of the Wall of (Fa)shame at the beginning of the next lecture. Do your worst!
